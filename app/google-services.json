@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "637866250143",
+    "project_id": "syno-f96fe",
+    "storage_bucket": "syno-f96fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:637866250143:android:a98ad8a7b29b2f7f5537aa",
+        "android_client_info": {
+          "package_name": "dev.nario.syno"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYXqE19LeKBaWVb23x8pcnV8eH3_0P3q0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
