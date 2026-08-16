@@ -12,7 +12,20 @@
           "package_name": "dev.nario.syno"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "637866250143-nsbn161udgqk9tf6ubpvjhp9gmhe1oeo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.nario.syno",
+            "certificate_hash": "f41e8f603f8fbfecb0ca94fb48bc0920d81ae2e6"
+          }
+        },
+        {
+          "client_id": "637866250143-a7lqtrvtv01bote49o3o9ho95tvd84jk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAYXqE19LeKBaWVb23x8pcnV8eH3_0P3q0"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "637866250143-a7lqtrvtv01bote49o3o9ho95tvd84jk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
