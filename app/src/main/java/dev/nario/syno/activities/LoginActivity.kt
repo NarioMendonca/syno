@@ -27,17 +27,17 @@ import com.google.firebase.auth.auth
 import dev.nario.syno.R
 import kotlinx.coroutines.launch
 
-class RegistrationActivity : ComponentActivity() {
+class LoginActivity : ComponentActivity() {
 
     private lateinit var emailErrorMsg: TextView
     private lateinit var pwdErrorMsg: TextView
     private lateinit var auth: FirebaseAuth
-    private val TAG = "RegistrationActivityLog"
+    private val TAG = "LoginActivityLog"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.registration_activity)
+        setContentView(R.layout.login_activity)
 
         val homeActivityIntent = Intent(this, HomeActivity::class.java)
 
@@ -54,55 +54,11 @@ class RegistrationActivity : ComponentActivity() {
         //declare variables
         val emailField = findViewById<EditText>(R.id.etEmail)
         val emailContainer = findViewById<LinearLayout>(R.id.emailContainer)
-        emailErrorMsg = findViewById<TextView>(R.id.emailErrorMessage)
 
         val pwdField = findViewById<EditText>(R.id.etPassword)
         val pwdContainer = findViewById<LinearLayout>(R.id.passwordContainer)
-        pwdErrorMsg = findViewById<TextView>(R.id.passwordErrorMessage)
 
-        val confirmPwdField = findViewById<EditText>(R.id.etConfirmPassword)
-        val confirmPwdContainer = findViewById<LinearLayout>(R.id.confirmPasswordContainer)
-
-        val createAccountBtn = findViewById<Button>(R.id.btnCreateAccount)
         val googleAccountBtn = findViewById<Button>(R.id.btnGoogle)
-
-        // click to login with email and password
-        createAccountBtn.setOnClickListener {
-            //validate user email and change UI to show if something is wrong
-            if (!isEmailValid(emailField.text.toString())) {
-                emailContainer.setBackgroundResource(R.drawable.bg_input_error)
-                return@setOnClickListener
-            }
-            emailContainer.setBackgroundResource(R.drawable.bg_input)
-            emailErrorMsg.visibility = View.GONE
-
-
-            // validate user password and change UI to show if something is wrong
-            if (!isPasswordsValid(pwdField.text.toString(), confirmPwdField.text.toString())) {
-                pwdContainer.setBackgroundResource(R.drawable.bg_input_error)
-                confirmPwdContainer.setBackgroundResource(R.drawable.bg_input_error)
-                return@setOnClickListener
-            }
-            pwdErrorMsg.visibility = View.GONE
-            pwdContainer.setBackgroundResource(R.drawable.bg_input)
-            confirmPwdContainer.setBackgroundResource(R.drawable.bg_input)
-
-            // create te user account after validate user data
-            auth.createUserWithEmailAndPassword(emailField.text.toString(), pwdField.text.toString())
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        Log.w(TAG,"user created: email ${emailField.text}")
-                        startActivity(homeActivityIntent)
-                    } else {
-                        if (task.exception is FirebaseAuthUserCollisionException) {
-                            Toast.makeText(this, "Um usuário com este email já existe!", Toast.LENGTH_LONG).show()
-                        }
-
-                        Log.w(TAG, "Fail to create user with email and password", task.exception)
-                    }
-                }
-
-        }
 
         googleAccountBtn.setOnClickListener {
             val googleIdOption = GetGoogleIdOption.Builder()
@@ -116,13 +72,13 @@ class RegistrationActivity : ComponentActivity() {
 
             lifecycleScope.launch {
                 try {
-                    val result = credentialManager.getCredential(this@RegistrationActivity, request)
+                    val result = credentialManager.getCredential(this@LoginActivity, request)
                     handleSignInWithGoogle(result.credential)
                     startActivity(homeActivityIntent)
                 } catch (e: GetCredentialException) {
                     Log.e("RegistrationActivity", e.errorMessage.toString())
                     Toast.makeText(
-                        this@RegistrationActivity,
+                        this@LoginActivity,
                         "Falha ao fazer login com google, verifique se há uma conta google neste dispositivo",
                         Toast.LENGTH_LONG
                     ).show()
