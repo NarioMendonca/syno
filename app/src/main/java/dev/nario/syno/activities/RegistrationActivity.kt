@@ -3,7 +3,6 @@ package dev.nario.syno.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -25,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import dev.nario.syno.R
+import dev.nario.syno.utils.isEmailInvalid
 import kotlinx.coroutines.launch
 
 class RegistrationActivity : ComponentActivity() {
@@ -39,16 +39,9 @@ class RegistrationActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.registration_activity)
 
-        val homeActivityIntent = Intent(this, HomeActivity::class.java)
-
         auth = Firebase.auth
 
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            Log.w(TAG,"user already exists, email: ${currentUser.email}")
-            startActivity(homeActivityIntent)
-        }
-
+        val homeActivityIntent = Intent(this, HomeActivity::class.java)
         val credentialManager = CredentialManager.create(this)
 
         //declare variables
@@ -56,20 +49,25 @@ class RegistrationActivity : ComponentActivity() {
         val emailContainer = findViewById<LinearLayout>(R.id.emailContainer)
         emailErrorMsg = findViewById<TextView>(R.id.emailErrorMessage)
 
+        //password
         val pwdField = findViewById<EditText>(R.id.etPassword)
         val pwdContainer = findViewById<LinearLayout>(R.id.passwordContainer)
         pwdErrorMsg = findViewById<TextView>(R.id.passwordErrorMessage)
 
+        //confirm password
         val confirmPwdField = findViewById<EditText>(R.id.etConfirmPassword)
         val confirmPwdContainer = findViewById<LinearLayout>(R.id.confirmPasswordContainer)
 
+        // registration buttons
         val createAccountBtn = findViewById<Button>(R.id.btnCreateAccount)
         val googleAccountBtn = findViewById<Button>(R.id.btnGoogle)
 
-        // click to login with email and password
+        // click to log in with email and password
         createAccountBtn.setOnClickListener {
             //validate user email and change UI to show if something is wrong
-            if (!isEmailValid(emailField.text.toString())) {
+            if (emailField.text.toString().isEmailInvalid()) {
+                emailErrorMsg.text = "O email inserido é inválido!"
+                emailErrorMsg.visibility = View.VISIBLE
                 emailContainer.setBackgroundResource(R.drawable.bg_input_error)
                 return@setOnClickListener
             }
@@ -104,6 +102,7 @@ class RegistrationActivity : ComponentActivity() {
 
         }
 
+        // create login with google
         googleAccountBtn.setOnClickListener {
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setServerClientId(getString(R.string.default_web_client_id))
@@ -131,14 +130,14 @@ class RegistrationActivity : ComponentActivity() {
         }
     }
 
-    fun isEmailValid(email: String): Boolean {
-        if (email.isEmailInvalid()) {
-            emailErrorMsg.text = "O email inserido é inválido!"
-            emailErrorMsg.visibility = View.VISIBLE
-            return false
+    override fun onStart() {
+        super.onStart()
+        val currentUser = auth.currentUser
+        val homeActivityIntent = Intent(this, HomeActivity::class.java)
+        if (currentUser != null) {
+            Log.w(TAG,"user already logged in, email: ${currentUser.email}")
+            startActivity(homeActivityIntent)
         }
-
-        return true;
     }
 
     fun isPasswordsValid(pwd: String, confirmPwd: String): Boolean {
@@ -161,10 +160,6 @@ class RegistrationActivity : ComponentActivity() {
         }
 
         return true;
-    }
-    fun CharSequence?.isEmailInvalid(): Boolean {
-        val isInvalid = this.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(this).matches()
-        return isInvalid
     }
 
     private fun handleSignInWithGoogle(credential: Credential) {

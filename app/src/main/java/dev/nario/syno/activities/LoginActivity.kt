@@ -3,17 +3,14 @@ package dev.nario.syno.activities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.enableEdgeToEdge
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.lifecycle.lifecycleScope
@@ -21,7 +18,6 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import dev.nario.syno.R
@@ -29,38 +25,47 @@ import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
 
-    private lateinit var emailErrorMsg: TextView
-    private lateinit var pwdErrorMsg: TextView
     private lateinit var auth: FirebaseAuth
-    private val TAG = "LoginActivityLog"
+    private lateinit var credentialManager: CredentialManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.login_activity)
 
-        val homeActivityIntent = Intent(this, HomeActivity::class.java)
-
         auth = Firebase.auth
+        credentialManager = CredentialManager.create(this)
 
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            Log.w(TAG,"user already exists, email: ${currentUser.email}")
-            startActivity(homeActivityIntent)
+        val btnLogin = findViewById<Button>(R.id.btnLogin)
+        val btnGoogle = findViewById<Button>(R.id.btnGoogle)
+        val forgotPassword = findViewById<TextView>(R.id.tvForgotPassword)
+        val redirectCreateAccountActivity = findViewById<TextView>(R.id.tvCreateAccount)
+
+        val etEmail = findViewById<EditText>(R.id.etEmail)
+        val etPassword = findViewById<EditText>(R.id.etPassword)
+
+        // login with email and password
+        btnLogin.setOnClickListener {
+            val email = etEmail.text.toString().trim()
+            val password = etPassword.text.toString().trim()
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        navigateToHome()
+                    } else {
+                        Log.w("LoginActivity", "signInWithEmail:failure", task.exception)
+                        Toast.makeText(this, "Falha na autenticação.", Toast.LENGTH_SHORT).show()
+                    }
+                }
         }
 
-        val credentialManager = CredentialManager.create(this)
-
-        //declare variables
-        val emailField = findViewById<EditText>(R.id.etEmail)
-        val emailContainer = findViewById<LinearLayout>(R.id.emailContainer)
-
-        val pwdField = findViewById<EditText>(R.id.etPassword)
-        val pwdContainer = findViewById<LinearLayout>(R.id.passwordContainer)
-
-        val googleAccountBtn = findViewById<Button>(R.id.btnGoogle)
-
-        googleAccountBtn.setOnClickListener {
+        // login with google
+        btnGoogle.setOnClickListener {
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setServerClientId(getString(R.string.default_web_client_id))
                 .setFilterByAuthorizedAccounts(false)
@@ -74,71 +79,66 @@ class LoginActivity : ComponentActivity() {
                 try {
                     val result = credentialManager.getCredential(this@LoginActivity, request)
                     handleSignInWithGoogle(result.credential)
-                    startActivity(homeActivityIntent)
                 } catch (e: GetCredentialException) {
-                    Log.e("RegistrationActivity", e.errorMessage.toString())
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Falha ao fazer login com google, verifique se há uma conta google neste dispositivo",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Log.e("LoginActivity", "Erro: ${e.errorMessage}")
                 }
             }
         }
+
+        // forgot password
+        forgotPassword.setOnClickListener {
+            val email = etEmail.text.toString().trim()
+
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Digite seu e-mail para redefinir a senha", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            auth.sendPasswordResetEmail(email)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(this, "E-mail enviado", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Erro ao enviar e-mail", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
+
+        // redirect to registration activity
+        redirectCreateAccountActivity.setOnClickListener {
+            startActivity(Intent(this, RegistrationActivity::class.java))
+        }
     }
 
-    fun isEmailValid(email: String): Boolean {
-        if (email.isEmailInvalid()) {
-            emailErrorMsg.text = "O email inserido é inválido!"
-            emailErrorMsg.visibility = View.VISIBLE
-            return false
+    // this function runs when the the activity becomes visible to user, after the onCreate function
+    // redirect using onStart avoid screen blink effects, the transiction becomes more fluid
+    override fun onStart() {
+        super.onStart()
+        if (auth.currentUser != null) {
+            navigateToHome()
         }
-
-        return true;
-    }
-
-    fun isPasswordsValid(pwd: String, confirmPwd: String): Boolean {
-        if (pwd.isEmpty()) {
-            pwdErrorMsg.text = "Defina uma senha no campo abaixo!"
-            pwdErrorMsg.visibility = View.VISIBLE
-            return false;
-        }
-
-        if (pwd != confirmPwd) {
-            pwdErrorMsg.text = "Senha e confirmar senha não são iguais!"
-            pwdErrorMsg.visibility = View.VISIBLE
-            return false;
-        }
-
-        if (pwd.length < 6) {
-            pwdErrorMsg.text = "Sua senha deve ter pelo menos 6 caracteres!"
-            pwdErrorMsg.visibility = View.VISIBLE
-            return false;
-        }
-
-        return true;
-    }
-    fun CharSequence?.isEmailInvalid(): Boolean {
-        val isInvalid = this.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(this).matches()
-        return isInvalid
     }
 
     private fun handleSignInWithGoogle(credential: Credential) {
-        val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+        if (credential is CustomCredential &&
+            credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
 
-        firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
-    }
+            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+            val firebaseCredential = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
 
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "signInWithCredential:success")
-                    val user = auth.currentUser
-                } else {
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+            auth.signInWithCredential(firebaseCredential)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        navigateToHome()
+                    } else {
+                        Log.w("LoginActivity", "signInWithGoogle:failure", task.exception)
+                        Toast.makeText(this, "Falha ao autenticar com o Google.", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
+        }
+    }
+    private fun navigateToHome() {
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
     }
 }
