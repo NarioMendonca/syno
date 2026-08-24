@@ -83,15 +83,18 @@
                 android:orientation="vertical"
                 android:gravity="center"
                 android:padding="28dp"
-                android:background="#17171F">
+                android:background="#17171F"
+                android:visibility="gone">
 
                 <TextView
+                    android:id="@+id/matchesDefaultMessageLogo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🎮"
                     android:textSize="32sp" />
 
                 <TextView
+                    android:id="@+id/matchesDefaultMessageTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -101,6 +104,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/matchesDefaultMessageDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -109,9 +113,23 @@
                     android:textSize="13sp" />
 
             </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMatches"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"/>
+            <ProgressBar
+                android:id="@+id/matchesProgressBar"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:indeterminate="true"
+                android:indeterminateTint="#8B5CF6"
+                android:layout_gravity="center"/>
+
 
         </LinearLayout>
-
     </ScrollView>
 
     <!-- Navbar -->

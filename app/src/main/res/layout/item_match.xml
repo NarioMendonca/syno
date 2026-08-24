@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/matchCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:orientation="vertical"
+    android:padding="18dp"
+    android:background="#17171F"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Jogo -->
+
+    <TextView
+        android:id="@+id/tvGame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Valorant"
+        android:textColor="#A78BFA"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <!-- Nome da partida -->
+
+    <TextView
+        android:id="@+id/tvMatchName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Ranked com a galera"
+        android:textColor="#FFFFFF"
+        android:textSize="19sp"
+        android:textStyle="bold" />
+
+    <!-- Data e horário -->
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="23/08/2026 • 19:30"
+        android:textColor="#D4D4D8"
+        android:textSize="14sp" />
+
+    <!-- Jogadores -->
+
+    <TextView
+        android:id="@+id/tvPlayers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="👥 3 / 5 jogadores"
+        android:textColor="#A1A1AA"
+        android:textSize="14sp" />
+
+    <!-- Tipo de jogo -->
+
+    <TextView
+        android:id="@+id/tvGameType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="🎮 Competitivo"
+        android:textColor="#A1A1AA"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <!-- Idade média -->
+
+    <TextView
+        android:id="@+id/tvAverageAge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="👤 Idade média: 20 anos"
+        android:textColor="#A1A1AA"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <!-- Local -->
+
+    <TextView
+        android:id="@+id/tvMeetingLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="🔗 Discord"
+        android:textColor="#A1A1AA"
+        android:textSize="14sp" />
+
+    <!-- Divisor -->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="#27272A" />
+
+    <!-- Botão -->
+
+    <Button
+        android:id="@+id/btnViewMatch"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#8B5CF6"
+        android:text="Ver partida"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

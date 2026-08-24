@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.graphics.Color
+import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ArrayAdapter
@@ -11,15 +12,25 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.core.graphics.drawable.toDrawable
+import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 import dev.nario.syno.R
 import dev.nario.syno.activities.HomeActivity
+import dev.nario.syno.entities.Match
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Date
 
 class ScheduleMatchDialog(
     private val activity: HomeActivity
 ) {
+    var match: Match? = null
     fun show() {
-
+        val db = Firebase.firestore
         val dialog = Dialog(activity)
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -78,44 +89,81 @@ class ScheduleMatchDialog(
             val gameCategory = etGameCategory.text.toString().trim()
             val date = etDate.text.toString().trim()
             val time = etTime.text.toString().trim()
-            val peopleLimit = etPeopleLimit.text.toString().trim()
+            val peopleLimit = etPeopleLimit.text.toString().trim().toInt()
             val meetingLocation = etMeetingLocation.text.toString().trim()
-            val averageAge = etAverageAge.text.toString().trim()
+            val averageAge = etAverageAge.text.toString().trim().toIntOrNull()
+
+            val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+            val localDateTime = LocalDateTime.parse("$date $time", dateFormatter)
+            val instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant()
+            val fullDate = Timestamp(Date.from(instant))
 
             val gameType = spinnerGameType.selectedItem.toString()
 
             // validating fields
             if (matchName.isEmpty()) {
-                etMatchName.error = "Informe o nome da partida"
+                etMatchName.error = "Informe o nome dessa partida!"
                 return@setOnClickListener
             }
 
             if (gameCategory.isEmpty()) {
-                etGameCategory.error = "Informe o jogo"
+                etGameCategory.error = "Informe o nome do jogo!"
                 return@setOnClickListener
             }
 
             if (date.isEmpty()) {
-                etDate.error = "Selecione o dia"
+                etDate.error = "Dia da partida não foi selecionado"
                 return@setOnClickListener
             }
 
             if (time.isEmpty()) {
-                etTime.error = "Selecione o horário"
+                etTime.error = "Horário da partida não foi selecionado"
                 return@setOnClickListener
             }
 
-            if (peopleLimit.isEmpty()) {
-                etPeopleLimit.error = "Informe o limite de pessoas"
+            if (peopleLimit < 2) {
+                if (peopleLimit.toInt() < 2) {
+                    etPeopleLimit.error = "O limite mínimo é dois!"
+                    return@setOnClickListener
+                }
+                etPeopleLimit.error = "Informe o limite de pessoas!"
                 return@setOnClickListener
             }
 
             if (meetingLocation.isEmpty()) {
-                etMeetingLocation.error = "Informe o local ou link"
+                etMeetingLocation.error = "Informe o local ou link!"
                 return@setOnClickListener
             }
 
-            // TODO: save match on firebase
+            val matchToCreate = Match(
+                null,
+                activity.currentUserId,
+                matchName,
+                gameCategory,
+                fullDate,
+                peopleLimit,
+                meetingLocation,
+                averageAge,
+                gameType,
+                participants = emptyList(),
+            )
+            match = matchToCreate
+
+            db.collection("matches")
+                .add(matchToCreate)
+                .addOnSuccessListener { createdMatchDocument ->
+                    createdMatchDocument.get().addOnSuccessListener { document ->
+                        if (document.exists()) {
+                            val match = document.toObject(Match::class.java)
+                            Log.w(activity.TAG, "match converted! ${match.toString()}")
+                            activity.addMatchToList(match as Match)
+                        }
+                    }
+                    Log.w(activity.TAG, "match created! id: ${createdMatchDocument.id}, ${createdMatchDocument}")
+                }
+                .addOnFailureListener { e ->
+                    Log.e(activity.TAG, "Error on create match: ", e)
+                }
 
             dialog.dismiss()
         }
