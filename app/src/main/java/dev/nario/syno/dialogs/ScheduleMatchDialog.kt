@@ -10,6 +10,7 @@ import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.core.graphics.drawable.toDrawable
 import com.google.firebase.Firebase
@@ -46,6 +47,8 @@ class ScheduleMatchDialog(
         )
 
         // dialog items
+        val btnCloseDetails = dialog.findViewById<ImageButton>(R.id.btnCloseDetails)
+
         val etMatchName = dialog.findViewById<EditText>(
             R.id.etMatchName
         )
@@ -79,6 +82,10 @@ class ScheduleMatchDialog(
 
         // cancel dialog
         btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnCloseDetails.setOnClickListener {
             dialog.dismiss()
         }
 

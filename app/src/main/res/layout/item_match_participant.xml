@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:gravity="center_vertical"
+    android:background="#202027">
+
+    <!-- Foto -->
+
+    <ImageView
+        android:id="@+id/ivProfilePhoto"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_menu_myplaces"
+        android:contentDescription="Foto de perfil" />
+
+
+    <!-- Informações -->
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <!-- Nome -->
+
+        <TextView
+            android:id="@+id/tvParticipantName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="João Silva"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <!-- Descrição -->
+
+        <TextView
+            android:id="@+id/tvParticipantDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="Gosto de jogar de forma casual e conhecer novos jogadores."
+            android:textColor="#A1A1AA"
+            android:textSize="12sp" />
+
+        <!-- Jogo preferido -->
+
+        <TextView
+            android:id="@+id/tvParticipantFavoriteGame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="🎮 Valorant"
+            android:textColor="#A78BFA"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+
+    <!-- Nota -->
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tvParticipantRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="★ 4.8"
+            android:textColor="#FBBF24"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="nota"
+            android:textColor="#71717A"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

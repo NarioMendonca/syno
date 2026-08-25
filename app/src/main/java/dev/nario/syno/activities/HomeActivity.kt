@@ -1,7 +1,6 @@
 package dev.nario.syno.activities
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import com.google.firebase.Firebase
@@ -14,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.nario.syno.BaseActivity
 import dev.nario.syno.adapters.MatchAdapter
+import dev.nario.syno.dialogs.MatchDetailsDialog
 import dev.nario.syno.dialogs.ScheduleMatchDialog
 import dev.nario.syno.entities.Match
 
@@ -40,7 +40,7 @@ class HomeActivity : BaseActivity() {
 
         matchAdapter = MatchAdapter(emptyList()) {
             match ->
-            //TODO: open match details
+            MatchDetailsDialog(this).show(match)
         }
         matchesListRv.adapter = matchAdapter
         matchesListRv.layoutManager = LinearLayoutManager(this)
