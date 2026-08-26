@@ -1,5 +1,6 @@
 package dev.nario.syno.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -7,6 +8,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import dev.nario.syno.R
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +36,8 @@ class HomeActivity : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
 
+        val btnPerfil = findViewById<ImageButton>(R.id.btnPerfil)
+
         matchesListRv = findViewById(R.id.rvMatches)
         emptyMatchesMessage = findViewById(R.id.emptyMatches)
         matchesLoadingProgressBar = findViewById(R.id.matchesProgressBar)
@@ -55,6 +59,12 @@ class HomeActivity : BaseActivity() {
 
         scheduleMatch.setOnClickListener {
             ScheduleMatchDialog(this).show()
+        }
+
+        btnPerfil.setOnClickListener {
+            val profileActivityIntent = Intent(this, ProfileActivity::class.java)
+            profileActivityIntent.putExtra("userId", currentUserId)
+            startActivity(profileActivityIntent)
         }
     }
 

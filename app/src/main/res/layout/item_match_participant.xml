@@ -7,7 +7,9 @@
     android:orientation="horizontal"
     android:padding="12dp"
     android:gravity="center_vertical"
-    android:background="#202027">
+    android:background="#202027"
+    android:clickable="true"
+    android:focusable="true">
 
     <!-- Foto -->
 

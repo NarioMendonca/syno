@@ -1,6 +1,7 @@
 package dev.nario.syno.dialogs
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.firestore
 import dev.nario.syno.R
 import dev.nario.syno.activities.HomeActivity
+import dev.nario.syno.activities.ProfileActivity
 import dev.nario.syno.adapters.ParticipantsAdapter
 import dev.nario.syno.entities.Match
 import dev.nario.syno.entities.User
@@ -137,7 +139,12 @@ class MatchDetailsDialog(
 
         // match participants recycler view
         val participantsRecyclerView = dialog.findViewById<RecyclerView>(R.id.rvParticipantsList)
-        val participantsAdapter = ParticipantsAdapter(emptyList())
+        val participantsAdapter = ParticipantsAdapter(emptyList()) { participant ->
+            val profileActivityIntent = Intent(activity, ProfileActivity::class.java)
+            profileActivityIntent.putExtra("userId", participant.id)
+            activity.startActivity(profileActivityIntent)
+
+        }
         participantsRecyclerView.adapter = participantsAdapter
         participantsRecyclerView.layoutManager = LinearLayoutManager(dialog.context)
 

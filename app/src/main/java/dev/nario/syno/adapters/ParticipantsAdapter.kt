@@ -10,7 +10,8 @@ import dev.nario.syno.R
 import dev.nario.syno.entities.User
 
 class ParticipantsAdapter(
-    private var participants: List<User>
+    private var participants: List<User>,
+    private val onParticipantClick: (User) -> Unit
 ) : RecyclerView.Adapter<ParticipantsAdapter.ParticipantsViewHolder>() {
 
     class ParticipantsViewHolder(participantView: View): RecyclerView.ViewHolder(participantView) {
@@ -34,6 +35,10 @@ class ParticipantsAdapter(
         holder.participantDescription.text = participant.profileDescription
         holder.participantFavoriteGame.text = participant.favoriteGame
         holder.participantRating.text = participant.rating.toString()
+
+        holder.itemView.setOnClickListener {
+            onParticipantClick(participant)
+        }
     }
 
     override fun getItemCount(): Int {

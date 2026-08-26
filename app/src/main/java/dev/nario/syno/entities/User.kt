@@ -1,9 +1,11 @@
 package dev.nario.syno.entities
 
+import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 data class User (
+    @DocumentId
     val id: String = "",
     val name: String = "",
     val profileDescription: String = "",
@@ -11,6 +13,7 @@ data class User (
     val isEmailVerified: Boolean = false,
     val photoUrl: String = "",
     val rating: Double = 0.0,
+    val votesCount: Int = 0,
     val favoriteGame: String = "",
     val city: String = "",
     val latitude: Double = 0.0,
