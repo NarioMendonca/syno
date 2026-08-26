@@ -4,8 +4,6 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.IgnoreExtraProperties
 import com.google.firebase.firestore.ServerTimestamp
-import java.sql.Time
-import java.time.LocalDateTime
 import java.util.Date
 
 @IgnoreExtraProperties

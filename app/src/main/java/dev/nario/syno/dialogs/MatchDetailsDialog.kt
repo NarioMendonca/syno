@@ -4,20 +4,20 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.graphics.drawable.toDrawable
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import dev.nario.syno.R
 import dev.nario.syno.activities.HomeActivity
@@ -31,12 +31,12 @@ import java.util.Locale
 
 class MatchDetailsDialog(
     private val activity: HomeActivity,
-    private val TAG: String = "MatchDetailsDialog"
+    private val TAG: String = "MatchDetailsDialog",
+    private val db: FirebaseFirestore = Firebase.firestore,
 ) {
+    private lateinit var btnJoin: Button
 
     fun show(match: Match) {
-        val db = Firebase.firestore
-
         // dialog configs
         val dialog = Dialog(activity)
 
@@ -91,7 +91,7 @@ class MatchDetailsDialog(
                 R.id.btnCloseDetails
             )
 
-        val btnJoin =
+        btnJoin =
             dialog.findViewById<Button>(
                 R.id.btnJoinMatch
             )
@@ -148,7 +148,7 @@ class MatchDetailsDialog(
         participantsRecyclerView.adapter = participantsAdapter
         participantsRecyclerView.layoutManager = LinearLayoutManager(dialog.context)
 
-        // match participans
+        // get match participans
         db.collection("users")
             .whereIn(FieldPath.documentId(), match.participants)
             .get()
@@ -170,14 +170,55 @@ class MatchDetailsDialog(
             dialog.dismiss()
         }
 
+        if (match.creatorId == activity.currentUserId) {
+            btnJoin.visibility = View.GONE
+        }
+
+        // verify if user is already in this match
+        userIsAlreadyOnMatch(match)
+
         // join in match
         btnJoin.setOnClickListener {
-
-            // Futuramente:
-            //
-            // adicionar o ID do usuário
-            // à lista participants no Firebase.
-
+            // verify if the user is the match creator
+            if (match.creatorId == activity.currentUserId) {
+                Toast.makeText(
+                    dialog.context,
+                    "Você não pode tentar entrar em sua propria partida!",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
+            userIsAlreadyOnMatch(match)
+            // just ensures that match id is not null to avoid crashes
+            if (match.id == null) {
+                Toast.makeText(
+                    dialog.context,
+                    "Erro ao tentar entrar na partida",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            } else {
+                // subscribe user in the match
+                match.id?.let { matchIdSafe ->
+                    db.collection("matches")
+                        .document(matchIdSafe)
+                        .update(
+                            "participants",
+                            FieldValue.arrayUnion(activity.currentUserId)
+                        )
+                        .addOnSuccessListener {
+                            btnJoin.isClickable = false
+                            btnJoin.text = "Você já está nessa partida!"
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                dialog.context,
+                                "Erro ao tentar entrar na partida, verifique sua internet",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                }
+            }
         }
 
         dialog.show()
@@ -189,60 +230,20 @@ class MatchDetailsDialog(
         )
     }
 
-    //mock participant for example
-    private fun addExampleParticipant(
-        container: LinearLayout
-    ) {
-
-        val participantView =
-            LayoutInflater
-                .from(activity)
-                .inflate(
-                    R.layout.item_match_participant,
-                    container,
-                    false
-                )
-
-
-        val ivProfilePhoto =
-            participantView.findViewById<ImageView>(
-                R.id.ivProfilePhoto
-            )
-
-        val tvName =
-            participantView.findViewById<TextView>(
-                R.id.tvParticipantName
-            )
-
-        val tvDescription =
-            participantView.findViewById<TextView>(
-                R.id.tvParticipantDescription
-            )
-
-        val tvFavoriteGame =
-            participantView.findViewById<TextView>(
-                R.id.tvParticipantFavoriteGame
-            )
-
-        val tvRating =
-            participantView.findViewById<TextView>(
-                R.id.tvParticipantRating
-            )
-
-        tvName.text = "João Silva"
-
-        tvDescription.text =
-            "Gosto de jogar de forma casual e conhecer novos jogadores."
-
-        tvFavoriteGame.text =
-            "🎮 Valorant"
-
-        tvRating.text =
-            "★ 4.8"
-
-
-        container.addView(
-            participantView
-        )
+    fun userIsAlreadyOnMatch(match: Match) {
+        match.id?.let { matchIdSafe ->
+            db.collection("matches")
+                .document(matchIdSafe)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val requestedMatch = document.toObject(Match::class.java)
+                        if (activity.currentUserId in requestedMatch!!.participants) {
+                            btnJoin.isClickable = false
+                            btnJoin.text = "Você já está nessa partida!"
+                        }
+                    }
+                }
+        }
     }
 }
