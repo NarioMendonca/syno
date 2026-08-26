@@ -11,7 +11,7 @@ import java.util.Date
 @IgnoreExtraProperties
 data class Match (
     @DocumentId
-    val id: String? = null,
+    var id: String? = null,
     val creatorId: String = "",
     val name: String = "",
     val game: String = "",

@@ -152,7 +152,7 @@ class ScheduleMatchDialog(
                 meetingLocation,
                 averageAge,
                 gameType,
-                participants = emptyList(),
+                participants = listOf(activity.currentUserId),
             )
             match = matchToCreate
 
