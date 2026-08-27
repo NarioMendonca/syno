@@ -37,6 +37,8 @@ class HomeActivity : BaseActivity() {
         setContentView(R.layout.activity_home)
 
         val btnPerfil = findViewById<ImageButton>(R.id.btnPerfil)
+        val btnSearchMatches = findViewById<LinearLayout>(R.id.navChat)
+        val btnSearchPlayers = findViewById<LinearLayout>(R.id.navPlayers)
 
         matchesListRv = findViewById(R.id.rvMatches)
         emptyMatchesMessage = findViewById(R.id.emptyMatches)
@@ -66,6 +68,16 @@ class HomeActivity : BaseActivity() {
             profileActivityIntent.putExtra("userId", currentUserId)
             startActivity(profileActivityIntent)
         }
+
+        btnSearchMatches.setOnClickListener {
+            startActivity(Intent(this, SearchMatchesActivity::class.java))
+        }
+
+        btnSearchPlayers.setOnClickListener {
+            startActivity(Intent(this, SearchPlayersActivity::class.java))
+        }
+
+
     }
 
     fun addMatchToList(match: Match) {
