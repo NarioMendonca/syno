@@ -23,7 +23,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import dev.nario.syno.R
+import dev.nario.syno.entities.User
 import dev.nario.syno.utils.isEmailInvalid
 import kotlinx.coroutines.launch
 
@@ -32,6 +35,7 @@ class RegistrationActivity : ComponentActivity() {
     private lateinit var emailErrorMsg: TextView
     private lateinit var pwdErrorMsg: TextView
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
     private val TAG = "RegistrationActivityLog"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +44,7 @@ class RegistrationActivity : ComponentActivity() {
         setContentView(R.layout.registration_activity)
 
         auth = Firebase.auth
+        db = Firebase.firestore
 
         val homeActivityIntent = Intent(this, HomeActivity::class.java)
         val credentialManager = CredentialManager.create(this)
@@ -85,15 +90,39 @@ class RegistrationActivity : ComponentActivity() {
             pwdContainer.setBackgroundResource(R.drawable.bg_input)
             confirmPwdContainer.setBackgroundResource(R.drawable.bg_input)
 
-            // create te user account after validate user data
+            // create user account after validate user data
             auth.createUserWithEmailAndPassword(emailField.text.toString(), pwdField.text.toString())
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        Log.w(TAG,"user created: email ${emailField.text}")
-                        startActivity(homeActivityIntent)
+                        // created user
+                        val email = emailField.text.toString()
+                        val firebaseUser = auth.currentUser
+                        val uid = firebaseUser?.uid ?: return@addOnCompleteListener
+
+                        val user = User(
+                            id = uid,
+                            name = email.substringBefore("@"),
+                            email = email,
+                            isEmailVerified = firebaseUser.isEmailVerified
+                        )
+
+                        // save new user in db
+                        db.collection("users").document(uid)
+                            .set(user)
+                            .addOnSuccessListener {
+                                Log.d(TAG, "User saved on firestore!")
+                                startActivity(homeActivityIntent)
+                                finish()
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(TAG, "fail to create user in firestore", e)
+                                Toast.makeText(this, "Erro ao salvar o perfil do usuário", Toast.LENGTH_LONG).show()
+                            }
                     } else {
                         if (task.exception is FirebaseAuthUserCollisionException) {
                             Toast.makeText(this, "Um usuário com este email já existe!", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(this, "Falha ao criar conta", Toast.LENGTH_LONG).show()
                         }
 
                         Log.w(TAG, "Fail to create user with email and password", task.exception)
@@ -102,7 +131,7 @@ class RegistrationActivity : ComponentActivity() {
 
         }
 
-        // create login with google
+        // create login with Google
         googleAccountBtn.setOnClickListener {
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setServerClientId(getString(R.string.default_web_client_id))
@@ -173,8 +202,31 @@ class RegistrationActivity : ComponentActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    val firebaseUser = auth.currentUser
+                    val uid = firebaseUser?.uid ?: return@addOnCompleteListener
+                    val email = firebaseUser.email ?: return@addOnCompleteListener
+
+                    val user = User(
+                        id = uid,
+                        name = email.substringBefore("@"),
+                        email = email,
+                        isEmailVerified = firebaseUser.isEmailVerified
+                    )
+
+                    // save new user in db
+                    db.collection("users").document(uid)
+                        .set(user)
+                        .addOnSuccessListener {
+                            Log.d(TAG, "User saved on firestore!")
+                            startActivity(Intent(this, HomeActivity::class.java))
+                            finish()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w(TAG, "fail to create user in firestore", e)
+                            Toast.makeText(this, "Erro ao salvar o perfil do usuário", Toast.LENGTH_LONG).show()
+                        }
+
                     Log.d(TAG, "signInWithCredential:success")
-                    val user = auth.currentUser
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                 }
