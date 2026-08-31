@@ -297,6 +297,17 @@
             android:indeterminate="true"
             android:indeterminateTint="#8B5CF6" />
 
+        <Button
+            android:id="@+id/btnCancelSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="#27272A"
+            android:text="Cancelar busca"
+            android:textAllCaps="false"
+            android:textColor="#F87171"
+            android:textStyle="bold" />
+
     </LinearLayout>
 
 
