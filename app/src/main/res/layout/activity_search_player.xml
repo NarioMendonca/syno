@@ -522,10 +522,15 @@
 
         <!-- Conteúdo -->
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
             android:paddingStart="28dp"
@@ -591,7 +596,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Disponível por mais 23h 41min"
+                    android:text="Você pode ficar visível por até 1 dia."
                     android:textColor="#A1A1AA"
                     android:textSize="13sp" />
 
@@ -603,6 +608,52 @@
                     android:textColor="#71717A"
                     android:textSize="12sp"
                     android:lineSpacingExtra="2dp" />
+
+            </LinearLayout>
+
+
+            <!-- Opções deixadas pelo usuário -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="#17171F">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Contato"
+                    android:textColor="#71717A"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvVisibleContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="discord.com/users/..."
+                    android:textColor="#A78BFA"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="Raio de busca"
+                    android:textColor="#71717A"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvVisibleDistance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="5 km"
+                    android:textColor="#A78BFA"
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -622,6 +673,8 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+
+        </ScrollView>
 
     </LinearLayout>
 

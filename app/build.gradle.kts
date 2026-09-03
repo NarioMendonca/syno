@@ -72,4 +72,8 @@ dependencies {
 
     // location
     implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    // exigido diretamente pelo lint para validar o uso de registerForActivityResult
+    // (SearchPlayersActivity usa para pedir permissão de localização)
+    implementation("androidx.fragment:fragment-ktx:1.8.5")
 }
