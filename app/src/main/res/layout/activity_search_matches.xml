@@ -110,7 +110,8 @@
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
                 android:paddingBottom="16dp"
-                android:nestedScrollingEnabled="true" />
+                android:nestedScrollingEnabled="true"
+                android:visibility="gone" />
 
 
             <!-- Loading -->
@@ -171,9 +172,58 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Tente alterar os filtros para encontrar novas partidas."
+                    android:text="Nenhum outro jogador criou partidas por enquanto. Que tal agendar a sua?"
                     android:textColor="#71717A"
                     android:textSize="13sp" />
+
+            </LinearLayout>
+
+
+            <!-- Falha ao buscar partidas -->
+
+            <LinearLayout
+                android:id="@+id/errorMatches"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="32dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📡"
+                    android:textSize="48sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Falha ao buscar partidas"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="Verifique sua conexão com a internet e tente novamente."
+                    android:textColor="#71717A"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btnRetryMatches"
+                    android:layout_width="220dp"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="24dp"
+                    android:backgroundTint="#8B5CF6"
+                    android:text="Tentar novamente"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

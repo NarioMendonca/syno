@@ -274,10 +274,6 @@ class SearchPlayersActivity : BaseActivity() {
         }
     }
 
-    /**
-     * Tenta primeiro a última localização conhecida, que é instantânea, e só cai para
-     * getCurrentLocation (que liga o GPS e pode demorar vários segundos) se não houver uma.
-     */
     @SuppressLint("MissingPermission")
     private fun getCurrentLocation(onSuccess: (Location) -> Unit, onError: () -> Unit) {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -290,7 +286,7 @@ class SearchPlayersActivity : BaseActivity() {
                 }
 
                 fusedLocationClient
-                    .getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, CancellationTokenSource().token)
+                    .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token)
                     .addOnSuccessListener { location ->
                         if (location != null) {
                             onSuccess(location)
