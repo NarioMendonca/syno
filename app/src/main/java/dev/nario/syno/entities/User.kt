@@ -14,6 +14,7 @@ data class User (
     val photoUrl: String = "",
     val rating: Double = 0.0,
     val votesCount: Int = 0,
+    val votes: List<Rating> = emptyList(),
     val favoriteGame: String = "",
     val city: String = "",
     val latitude: Double = 0.0,

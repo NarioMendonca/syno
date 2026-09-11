@@ -191,7 +191,14 @@
             </LinearLayout>
 
 
-            <!-- Avaliar -->
+            <!-- Avaliar (só aparece para perfis de outros usuários que ainda não foram avaliados) -->
+
+            <LinearLayout
+                android:id="@+id/ratingFormContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
@@ -213,58 +220,58 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <TextView
+                <ImageView
                     android:id="@+id/star1"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:gravity="center"
-                    android:text="☆"
-                    android:textColor="#71717A"
-                    android:textSize="32sp"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:padding="6dp"
+                    android:background="@drawable/button_icon_ripple"
+                    android:src="@drawable/ic_star_outline"
+                    android:contentDescription="Dar nota 1"
                     android:clickable="true"
                     android:focusable="true" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/star2"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:gravity="center"
-                    android:text="☆"
-                    android:textColor="#71717A"
-                    android:textSize="32sp"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:padding="6dp"
+                    android:background="@drawable/button_icon_ripple"
+                    android:src="@drawable/ic_star_outline"
+                    android:contentDescription="Dar nota 2"
                     android:clickable="true"
                     android:focusable="true" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/star3"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:gravity="center"
-                    android:text="☆"
-                    android:textColor="#71717A"
-                    android:textSize="32sp"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:padding="6dp"
+                    android:background="@drawable/button_icon_ripple"
+                    android:src="@drawable/ic_star_outline"
+                    android:contentDescription="Dar nota 3"
                     android:clickable="true"
                     android:focusable="true" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/star4"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:gravity="center"
-                    android:text="☆"
-                    android:textColor="#71717A"
-                    android:textSize="32sp"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:padding="6dp"
+                    android:background="@drawable/button_icon_ripple"
+                    android:src="@drawable/ic_star_outline"
+                    android:contentDescription="Dar nota 4"
                     android:clickable="true"
                     android:focusable="true" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/star5"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:gravity="center"
-                    android:text="☆"
-                    android:textColor="#71717A"
-                    android:textSize="32sp"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:padding="6dp"
+                    android:background="@drawable/button_icon_ripple"
+                    android:src="@drawable/ic_star_outline"
+                    android:contentDescription="Dar nota 5"
                     android:clickable="true"
                     android:focusable="true" />
 
@@ -282,6 +289,39 @@
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <!-- Resultado do envio da avaliação (sucesso ou erro) -->
+
+            <TextView
+                android:id="@+id/tvRatingFeedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:padding="12dp"
+                android:background="#17171F"
+                android:text=""
+                android:textColor="#22C55E"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+
+            <!-- Aparece no lugar do formulário quando o usuário já avaliou este jogador -->
+
+            <TextView
+                android:id="@+id/tvAlreadyVoted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:gravity="center"
+                android:text="✅ Você já avaliou este jogador"
+                android:textColor="#71717A"
+                android:textSize="13sp"
+                android:visibility="gone" />
 
 
             <!-- Divisor -->
