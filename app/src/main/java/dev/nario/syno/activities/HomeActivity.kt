@@ -2,6 +2,7 @@ package dev.nario.syno.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import com.google.firebase.Firebase
@@ -30,6 +31,7 @@ class HomeActivity : BaseActivity() {
     private lateinit var matchesListRv: RecyclerView
     private lateinit var emptyMatchesMessage: LinearLayout
     private lateinit var matchesLoadingProgressBar: View
+    private lateinit var usernameTv: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +57,12 @@ class HomeActivity : BaseActivity() {
         matchesMessageDescription = findViewById<TextView>(R.id.matchesDefaultMessageDescription)
         matchesMessageLogo = findViewById<TextView>(R.id.matchesDefaultMessageLogo)
 
+        usernameTv = findViewById(R.id.tvWelcome)
+
         val scheduleMatch = findViewById<Button>(R.id.btnScheduleMatch)
 
         loadMatches()
+        loadUsername()
 
         scheduleMatch.setOnClickListener {
             ScheduleMatchDialog(this).show()
@@ -109,6 +114,22 @@ class HomeActivity : BaseActivity() {
                 matchesMessageDescription.text = "Verifique sua conexão com a internet e reinicie o App"
                 matchesMessageLogo.visibility = View.GONE
             }
+    }
 
+    private fun loadUsername() {
+        val userDocRef = db.collection("users").document(currentUserId)
+
+        userDocRef.get()
+            .addOnSuccessListener { document ->
+                val username = document.get("name")
+                if (username == null) {
+                    Log.w(TAG, "Falha ao carregar nome de usuário na home")
+                    return@addOnSuccessListener
+                }
+                usernameTv.text = "Olá, $username!"
+            }
+            .addOnFailureListener {
+                Log.w(TAG, "Falha ao carregar nome de usuário na home")
+            }
     }
 }
